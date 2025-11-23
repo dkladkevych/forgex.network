@@ -5,6 +5,8 @@ const BECH32_CHARSET = "qpzry9x8gf2tvdw0s3jn54khce6mua7l";
 
 const ec = new elliptic.ec("secp256k1");
 
+const url = "http://127.0.0.1:8080"
+
 var priv_key
 var pub_key
 var address
@@ -440,16 +442,36 @@ function calculate_fee(amount) {
 
 //Conections functions
 
+function Get(command) {
+    const urla = url + command;
+    const xhr = new XMLHttpRequest();
+    xhr.open("GET", urla, false);
+    xhr.send(null);
+    return xhr.responseText;
+}
+
+function Post(command, data) {
+    const urla = url + command;
+    const xhr = new XMLHttpRequest();
+    xhr.open("POST", urla, false);
+    xhr.setRequestHeader("Content-Type", "application/json");
+    xhr.send(data);
+    return xhr.responseText;
+}
+
 function load_balance() {
-    return 123.376;
+    var response = JSON.parse(Get("/balance?address=" + address));
+    return response.balance;
 }
 
 function load_nonce() {
-    return 42;
+  var response = JSON.parse(Get("/nonce?address=" + address));
+  return response.nonce;
 }
 
 function send_tx(tx_json) {
-    console.log("Sending transaction: " + tx_json);
+    var response = JSON.parse(Post("/broadcast_tx", tx_json));
+    console.log("Response: " + response.status);
 }
 
 //Signature functions

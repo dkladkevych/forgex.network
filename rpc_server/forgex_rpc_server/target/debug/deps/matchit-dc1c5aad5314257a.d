@@ -1,0 +1,11 @@
+C:\Users\dklad\OneDrive\Documents\с\rpc_server\forgex_rpc_server\target\debug\deps\matchit-dc1c5aad5314257a.d: C:\Users\dklad\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\matchit-0.7.3\src\lib.rs C:\Users\dklad\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\matchit-0.7.3\src\error.rs C:\Users\dklad\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\matchit-0.7.3\src\params.rs C:\Users\dklad\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\matchit-0.7.3\src\router.rs C:\Users\dklad\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\matchit-0.7.3\src\tree.rs
+
+C:\Users\dklad\OneDrive\Documents\с\rpc_server\forgex_rpc_server\target\debug\deps\libmatchit-dc1c5aad5314257a.rlib: C:\Users\dklad\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\matchit-0.7.3\src\lib.rs C:\Users\dklad\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\matchit-0.7.3\src\error.rs C:\Users\dklad\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\matchit-0.7.3\src\params.rs C:\Users\dklad\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\matchit-0.7.3\src\router.rs C:\Users\dklad\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\matchit-0.7.3\src\tree.rs
+
+C:\Users\dklad\OneDrive\Documents\с\rpc_server\forgex_rpc_server\target\debug\deps\libmatchit-dc1c5aad5314257a.rmeta: C:\Users\dklad\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\matchit-0.7.3\src\lib.rs C:\Users\dklad\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\matchit-0.7.3\src\error.rs C:\Users\dklad\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\matchit-0.7.3\src\params.rs C:\Users\dklad\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\matchit-0.7.3\src\router.rs C:\Users\dklad\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\matchit-0.7.3\src\tree.rs
+
+C:\Users\dklad\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\matchit-0.7.3\src\lib.rs:
+C:\Users\dklad\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\matchit-0.7.3\src\error.rs:
+C:\Users\dklad\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\matchit-0.7.3\src\params.rs:
+C:\Users\dklad\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\matchit-0.7.3\src\router.rs:
+C:\Users\dklad\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\matchit-0.7.3\src\tree.rs:
