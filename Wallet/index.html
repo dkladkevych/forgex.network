@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Forgex Wallet</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Screens -->
+
+    <!--Welcome Screen-->
+    <div id="screen-welcome" class="screen">
+        <h1>Welcome to Forgex Wallet</h1>
+        <button id="welcome-create-btn">Create a New Wallet</button>
+        <button id="welcome-import-btn">Import Wallet by 12 words</button>
+    </div>
+
+    <!--Create Wallet Screens-->
+
+    <!--Agreement Screen-->
+    <div id="screen-agree" class="screen" style="display:none">
+        <h1>Save Your Recovery Words</h1>
+        <p>These 12 words are the only way to recover your wallet if you lose your device or clear your browser.</p>
+        <p>If you lose them, your funds are gone forever.</p>
+        <p>Do not screenshot them.</p>
+        <p>Do not share them.</p>
+        <p>Write them down and store them safely.</p>
+        <p>I understand and will save my recovery words:</p>
+        <button id="agree-btn">I Agree</button>
+    </div>
+
+    <!--Create Words Screen-->
+    <div id="screen-create" class="screen" style="display:none">
+        <table>
+            <tr>
+                <td><p id="create-1-word"></p></td>
+                <td><p id="create-2-word"></p></td>
+            </tr>
+            <tr>
+                <td><p id="create-3-word"></p></td>
+                <td><p id="create-4-word"></p></td>
+            </tr>
+            <tr>
+                <td><p id="create-5-word"></p></td>
+                <td><p id="create-6-word"></p></td>
+            </tr>
+            <tr>
+                <td><p id="create-7-word"></p></td>
+                <td><p id="create-8-word"></p></td>
+            </tr>
+            <tr>
+                <td><p id="create-9-word"></p></td>
+                <td><p id="create-10-word"></p></td>
+            </tr>
+            <tr>
+                <td><p id="create-11-word"></p></td>
+                <td><p id="create-12-word"></p></td>
+            </tr>
+        </table>
+        <button id="create-confirm-btn">Confirm Words</button>
+    </div>
+
+
+    <!--Set Password Screen-->
+    <div id="screen-password" class="screen" style="display:none">
+        <input type="text" id="password-input-1" placeholder="Make a password">
+        <input type="text" id="password-input-2" placeholder="Confirm your password">
+        <button id="password-btn">Set Password</button>
+    </div>
+
+
+
+    <!--Import Wallet Screens-->
+
+    <!--Write 12 Words Screen-->
+    <div id="screen-import" class="screen" style="display:none">
+        <h1>Import Your Wallet</h1>
+        <table>
+            <tr>
+                <td><input id="import-1-word"></td>
+                <td><input id="import-2-word"></td>
+            </tr>
+            <tr>
+                <td><input id="import-3-word"></td>
+                <td><input id="import-4-word"></td>
+            </tr>
+            <tr>
+                <td><input id="import-5-word"></td>
+                <td><input id="import-6-word"></td>
+            </tr>
+            <tr>
+                <td><input id="import-7-word"></td>
+                <td><input id="import-8-word"></td>
+            </tr>
+            <tr>
+                <td><input id="import-9-word"></td>
+                <td><input id="import-10-word"></td>
+            </tr>
+            <tr>
+                <td><input id="import-11-word"></td>
+                <td><input id="import-12-word"></td>
+            </tr>
+        </table>
+        <button id="import-confirm-btn">Confirm Words</button>
+    </div>
+    
+    <!--Unlock Wallet Screen-->
+    <div id="screen-unlock" class="screen" style="display:none">
+        <input type="text" id="unlock-input" placeholder="Enter your password">
+        <button id="unlock-btn">Login</button>
+    </div>
+
+    <!--Dashboard Screens-->
+    <div id="screen-dashboard" class="screen" style="display:none">
+        <p>Address: <span id="dashboard-address"></span></p>
+        <p>Balance: <span id="dashboard-balance"></span></p>
+        <button id="dashboard-btn">Send Funds</button>
+        <button id="dashboard-log-out-btn">Log Out</button>
+    </div>
+
+    <div id="screen-dashboard-send" class="screen" style="display:none">
+        <p>Fee is 1% of transaction amount</p>
+        <input id="dashboard-address-input" placeholder="Recipient Address">
+        <input id="dashboard-amount-input" placeholder="Amount to Send">
+        <button id="dashboard-send-btn">Send</button>
+        <button id="dashboard-back-btn">Back to dashboard</button>
+    </div>
+
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/crypto-js@4.2.0/crypto-js.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/js-sha256@0.9.0/build/sha256.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/elliptic/6.5.4/elliptic.min.js"></script>
+    <script src="main.js"></script>
+    </body>
+</html>
