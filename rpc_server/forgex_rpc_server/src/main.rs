@@ -77,4 +77,3 @@ async fn broadcast_tx(Json(body): Json<Value>) -> Json<Value> {
         "received": body,
     }))
 }
-
