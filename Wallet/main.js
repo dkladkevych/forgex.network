@@ -3,6 +3,8 @@ const WORDLIST = [
 ];
 const BECH32_CHARSET = "qpzry9x8gf2tvdw0s3jn54khce6mua7l";
 
+const ec = new elliptic.ec("secp256k1");
+
 var priv_key
 var pub_key
 var address
@@ -112,12 +114,30 @@ function delete_data() {
   localStorage.removeItem("forgex_wallet");
 }
 
+function from_utf8(str) {
+  return new TextEncoder().encode(str);
+}
+
+function to_utf8(bytes) {
+  return new TextDecoder().decode(bytes);
+}
+
+function normalize_bytes(b) {
+  if (b instanceof Uint8Array) return b;
+  if (Array.isArray(b)) return new Uint8Array(b);
+  if (typeof b === "object" && b !== null) {
+    return new Uint8Array(Object.values(b));
+  }
+  throw new Error("Unsupported byte format");
+}
+
 function to_hex(byteArray) {
-    let hexString = '';
-    for (let i = 0; i < byteArray.length; i++) {
-    hexString += byteArray[i].toString(16).padStart(2, '0');
-    }
-    return hexString;
+  const bytes = normalize_bytes(byteArray);
+  let hexString = '';
+  for (let i = 0; i < bytes.length; i++) {
+    hexString += bytes[i].toString(16).padStart(2, '0');
+  }
+  return hexString;
 }
 
 function from_hex(hex) {
@@ -405,6 +425,7 @@ async function decrypt_key(encrypted, password) {
   }
 }
 
+
 //Dashboard functions
 
 function load_dashboard() {
@@ -413,10 +434,82 @@ function load_dashboard() {
     dashboard_balance.innerText = load_balance() + "GLD";
 }
 
+function calculate_fee(amount) {
+    return amount * 0.01;
+}
+
 //Conections functions
 
 function load_balance() {
     return 123.376;
+}
+
+function load_nonce() {
+    return 42;
+}
+
+function send_tx(tx_json) {
+    console.log("Sending transaction: " + tx_json);
+}
+
+//Signature functions
+
+function pipe_v1_merge(...parts) {
+  return parts
+    .map(s => s.replace(/\s+/g, ""))
+    .join("");
+}
+
+function sign_tx(message) {
+  if (!(priv_key instanceof Uint8Array) || priv_key.length !== 32) {
+    throw new Error("priv_key must be Uint8Array(32)");
+  }
+
+  const msgBytes = from_utf8(message);
+
+  const hashBytes = sha256.array(msgBytes);
+  const hashHex = to_hex(hashBytes);
+
+  const privHex = to_hex(priv_key);
+
+  const key = ec.keyFromPrivate(privHex);
+  const sig = key.sign(hashHex, { canonical: true });
+
+  const rBytes = sig.r.toArrayLike(Uint8Array, "be", 32);
+  const sBytes = sig.s.toArrayLike(Uint8Array, "be", 32);
+
+  const sigBytes = new Uint8Array(64);
+  sigBytes.set(rBytes, 0);
+  sigBytes.set(sBytes, 32);
+
+  return sigBytes;
+}
+
+function build_tx_json(domain_tag, chain_id, tx_type, to, token, amount, fee, nonce, timestamp_ms, sigBytes, encoding) {
+  if (!address || !pub_key || !priv_key) {
+    throw new Error("Wallet is not unlocked");
+  }
+  const from = address;
+  const sigHex = to_hex(sigBytes);
+  const pubHex = to_hex(pub_key);
+
+  const tx = {
+    domain_tag: domain_tag,
+    chain_id: chain_id,
+    tx_type: tx_type,
+    from: from,
+    to: to,
+    token: token,
+    amount: amount,
+    fee: fee,
+    nonce: nonce,
+    timestamp_ms: timestamp_ms,
+    pub_key: pubHex,
+    sig: sigHex,
+    encoding: encoding
+  };
+
+  return JSON.stringify(tx);
 }
 
 //Listeners
@@ -494,8 +587,9 @@ dashboard_send_btn.addEventListener("click", function() {
     }
     const amount = parseInt(parseFloat(dashboard_amount_input.value.trim())*1000000);
     const balance = parseInt(parseFloat(load_balance())*1000000);
-    console.log(amount);
-    console.log(balance);
+    const fee = calculate_fee(amount);
+    const nonce = load_nonce();
+    const timestamp_ms = Date.now();
     if (isNaN(amount) || amount <= 0) {
         alert("Invalid amount");
         return;
@@ -503,6 +597,31 @@ dashboard_send_btn.addEventListener("click", function() {
         alert("Insufficient balance");
         return;
     }
+    const timestamp_ms_str = timestamp_ms.toString();
+    pipe_v1_str = pipe_v1_merge("GLD_TX_v1", 
+                "gld-dev-1", 
+                "transfer", 
+                address, 
+                toAddress, 
+                "GLD", 
+                amount.toString(), 
+                fee.toString(), 
+                nonce.toString(), 
+                timestamp_ms_str);
+    const signature = sign_tx(pipe_v1_str);
+    const tx_json = build_tx_json("GLD_TX_v1",
+                                  "gld-dev-1",
+                                  "transfer",
+                                  toAddress,
+                                  "GLD",
+                                  amount.toString(),
+                                  fee.toString(),
+                                  nonce.toString(),
+                                  timestamp_ms_str,
+                                  signature,
+                                  "pipe_v1");
+    send_tx(tx_json);
+    
 });
 
 dashboard_back_btn.addEventListener("click", function() {
