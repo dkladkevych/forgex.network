@@ -1,3 +1,4 @@
+mod p2p;
 use axum::{
     routing::{get, post},
     Json, Router, extract::Query
@@ -7,10 +8,11 @@ use serde_json::{json, Value};
 use std::net::SocketAddr;
 use tokio::net::TcpListener;
 use tower_http::cors::{Any, CorsLayer};
+use p2p::p2p_send;
+
 
 #[tokio::main]
 async fn main() {
-    // CORS: для MVP просто разрешаем всё
     let cors = CorsLayer::new()
         .allow_origin(Any)
         .allow_methods([Method::GET, Method::POST])
@@ -72,7 +74,9 @@ async fn get_nonce(Query(params): Query<Value>) -> Json<Value> {
 
 async fn broadcast_tx(Json(body): Json<Value>) -> Json<Value> {
     println!("Received tx: {body}");
-    Json(json!({
+    let resp = p2p_send("127.0.0.1:5050", &body.to_string()).await.unwrap();
+    println!("Ответ: {}", resp);
+        Json(json!({
         "status": "accepted",
         "received": body,
     }))
