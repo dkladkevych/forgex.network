@@ -1,14 +1,18 @@
 mod p2p;
+mod validate;
+
 use axum::{
     routing::{get, post},
     Json, Router, extract::Query
 };
+
 use http::Method;
 use serde_json::{json, Value};
 use std::net::SocketAddr;
 use tokio::net::TcpListener;
 use tower_http::cors::{Any, CorsLayer};
 use p2p::p2p_send;
+use validate::{Tx, parse_tx};
 
 
 #[tokio::main]
@@ -18,7 +22,6 @@ async fn main() {
         .allow_methods([Method::GET, Method::POST])
         .allow_headers(Any);
 
-    // Роуты
     let app = Router::new()
         .route("/health", get(health_check))
         .route("/get_info", get(get_info))
@@ -27,12 +30,10 @@ async fn main() {
         .route("/broadcast_tx", post(broadcast_tx))
         .layer(cors);
 
-    // Адрес
     let addr = SocketAddr::from(([127, 0, 0, 1], 8080));
     let listener = TcpListener::bind(addr).await.unwrap();
     println!("RPC server running on http://{}", listener.local_addr().unwrap());
 
-    // Запуск сервера
     axum::serve(listener, app).await.unwrap();
 }
 
@@ -71,13 +72,26 @@ async fn get_nonce(Query(params): Query<Value>) -> Json<Value> {
         "nonce": 1
     }))
 }
+    // let resp = p2p_send("127.0.0.1:5050", &body.to_string()).await.unwrap();
 
 async fn broadcast_tx(Json(body): Json<Value>) -> Json<Value> {
-    println!("Received tx: {body}");
-    let resp = p2p_send("127.0.0.1:5050", &body.to_string()).await.unwrap();
-    println!("Ответ: {}", resp);
-        Json(json!({
-        "status": "accepted",
-        "received": body,
-    }))
+    let tx_opt = parse_tx(&body.to_string());
+
+    match tx_opt {
+        Some(tx) => {
+            println!("Parsed tx: {:?}", tx);
+            Json(json!({
+                "status": "accepted",
+                "tx_hash": "0x123"
+            }))
+        }
+        None => {
+            println!("Invalid tx received: {}", body);
+            Json(json!({
+                "status": "rejected",
+                "reason": "Invalid transaction"
+            }))
+        }
+    }
+    
 }
