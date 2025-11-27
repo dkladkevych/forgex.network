@@ -1,14 +1,21 @@
-fn to_utf8_bytes<T: ToString>(value: T) -> Vec<u8> {
-    let s = value.to_string();
-    let bytes = s.as_bytes().to_vec();
+mod p2p;
 
-    println!("Строка: {}", s);
-    println!("Байты: {:?}", bytes);
-    println!("Количество байтов: {}", bytes.len());
+use anyhow::Result;
 
-    bytes
+fn handle_message(msg: Vec<u8>) -> Vec<u8> {
+    println!("---- New message from peer ----");
+    println!("Len: {}", msg.len());
+    println!("Raw bytes: {:?}", msg);
+
+    let hex: String = msg.iter().map(|b| format!("{:02x}", b)).collect();
+    println!("Hex: {}", hex);
+
+    b"OK_FROM_NODE\n".to_vec()
 }
 
-fn main() {
-    to_utf8_bytes("pipe-v1");
+#[tokio::main]
+async fn main() -> Result<()> {
+    let addr = "127.0.0.1:5050";
+
+    p2p::run_p2p_server(addr, handle_message).await
 }

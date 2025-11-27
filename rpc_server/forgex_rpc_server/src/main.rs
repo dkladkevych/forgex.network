@@ -15,9 +15,10 @@ use tower_http::cors::{Any, CorsLayer};
 use p2p::p2p_send;
 use crate::validate::Tx;
 use crate::validate::parse_tx;
-use model::make_raw_tx;
-use model::send_tx;
+use model::{make_raw_tx, send_tx, ask_balance, ask_nonce};
 use sha2::{Sha256, Digest};
+
+const IP_PORT: &str = "127.0.0.1:5050";
 
 
 #[tokio::main]
@@ -58,8 +59,12 @@ async fn get_info() -> Json<Value> {
 
 async fn get_balance(Query(params): Query<Value>) -> Json<Value> {
     let address = params.get("address").and_then(|v| v.as_str()).unwrap_or("");
+    let msg = ask_balance(&address).unwrap();
+    let res = p2p_send(IP_PORT, &msg).await.unwrap();
 
+    println!("Msg: {:?}", msg);
     println!("Balance request for: {}", address);
+    println!("P2P response: {:?}", res);
 
     Json(json!({
         "address": address,
@@ -69,15 +74,18 @@ async fn get_balance(Query(params): Query<Value>) -> Json<Value> {
 
 async fn get_nonce(Query(params): Query<Value>) -> Json<Value> {
     let address = params.get("address").and_then(|v| v.as_str()).unwrap_or("");
+    let msg = ask_nonce(&address).unwrap();
+    let res = p2p_send(IP_PORT, &msg).await.unwrap();
 
+    println!("Msg: {:?}", msg);
     println!("Nonce request for: {}", address);
+    println!("P2P response: {:?}", res);
 
     Json(json!({
         "address": address,
         "nonce": 1
     }))
 }
-    // let resp = p2p_send("127.0.0.1:5050", &body.to_string()).await.unwrap();
 
 async fn broadcast_tx(Json(body): Json<Value>) -> Json<Value> {
     let tx_opt = parse_tx(&body.to_string());
@@ -91,7 +99,7 @@ async fn broadcast_tx(Json(body): Json<Value>) -> Json<Value> {
                 println!("Tx hash: {:?}", tx_hash_hex);
                 let sent_tx = send_tx(&raw);
                 println!("Sent tx: {:?}", sent_tx);
-                let res = p2p_send("127.0.0.1:5050", &sent_tx.unwrap()).await.unwrap();
+                let res = p2p_send(IP_PORT, &sent_tx.unwrap()).await.unwrap();
                 println!("P2P response: {:?}", res);
 
                 Json(json!({

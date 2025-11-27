@@ -15,9 +15,6 @@ fn token_byte(s: &str) -> u8 {
     }
 }
 
-
-
-
 pub fn send_tx(raw_tx: &[u8]) -> Result<Vec<u8>, String> {
     if raw_tx.len() != 269 {
         return Err(format!(
@@ -47,6 +44,58 @@ pub fn send_tx(raw_tx: &[u8]) -> Result<Vec<u8>, String> {
             buf.len()
         ));
     }
+
+    Ok(buf)
+}
+
+pub fn ask_nonce(address: &str) -> Result<Vec<u8>, String> {
+
+    let addr_bytes = utf8_to_bytes(address);
+    if addr_bytes.len() != 56 {
+        return Err(format!(
+            "address must be 56 bytes utf-8, got {}",
+            addr_bytes.len()
+        ));
+    }
+
+    let msg_type: u8 = 5;
+    let payload_len: u16 = 56;
+
+    let mut buf = Vec::with_capacity(63);
+
+    buf.extend_from_slice(b"FGX1");
+
+    buf.push(msg_type);
+
+    buf.extend_from_slice(&payload_len.to_be_bytes());
+
+    buf.extend_from_slice(&addr_bytes);
+
+    Ok(buf)
+}
+
+pub fn ask_balance(address: &str) -> Result<Vec<u8>, String> {
+    let addr_bytes = utf8_to_bytes(address);
+    if addr_bytes.len() != 56 {
+        return Err(format!(
+            "address must be 56 bytes utf-8, got {}",
+            addr_bytes.len()
+        ));
+    }
+
+    let msg_type: u8 = 3;
+
+    let payload_len: u16 = 56;
+
+    let mut buf = Vec::with_capacity(63);
+
+    buf.extend_from_slice(b"FGX1");
+
+    buf.push(msg_type);
+
+    buf.extend_from_slice(&payload_len.to_be_bytes());
+
+    buf.extend_from_slice(&addr_bytes);
 
     Ok(buf)
 }
