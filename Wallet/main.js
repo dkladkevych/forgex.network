@@ -472,6 +472,7 @@ function load_nonce() {
 function send_tx(tx_json) {
     var response = JSON.parse(Post("/broadcast_tx", tx_json));
     console.log("Response: " + response.status);
+    console.log("Tx_hash: " + response.tx_hash);
 }
 
 //Signature functions
@@ -500,9 +501,15 @@ function sign_tx(message) {
   const rBytes = sig.r.toArrayLike(Uint8Array, "be", 32);
   const sBytes = sig.s.toArrayLike(Uint8Array, "be", 32);
 
-  const sigBytes = new Uint8Array(64);
+  const v = sig.recoveryParam;
+  if (v === null || v === undefined) {
+    throw new Error("No recoveryParam from signature");
+  }
+
+  const sigBytes = new Uint8Array(65);
   sigBytes.set(rBytes, 0);
   sigBytes.set(sBytes, 32);
+  sigBytes[64] = v;
 
   return sigBytes;
 }

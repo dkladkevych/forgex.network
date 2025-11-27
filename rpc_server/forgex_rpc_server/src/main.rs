@@ -1,5 +1,6 @@
 mod p2p;
 mod validate;
+mod model;
 
 use axum::{
     routing::{get, post},
@@ -12,7 +13,11 @@ use std::net::SocketAddr;
 use tokio::net::TcpListener;
 use tower_http::cors::{Any, CorsLayer};
 use p2p::p2p_send;
-use validate::{Tx, parse_tx};
+use crate::validate::Tx;
+use crate::validate::parse_tx;
+use model::make_raw_tx;
+use model::send_tx;
+use sha2::{Sha256, Digest};
 
 
 #[tokio::main]
@@ -77,21 +82,55 @@ async fn get_nonce(Query(params): Query<Value>) -> Json<Value> {
 async fn broadcast_tx(Json(body): Json<Value>) -> Json<Value> {
     let tx_opt = parse_tx(&body.to_string());
 
-    match tx_opt {
-        Some(tx) => {
-            println!("Parsed tx: {:?}", tx);
-            Json(json!({
-                "status": "accepted",
-                "tx_hash": "0x123"
-            }))
+    if let Some(ref tx) = tx_opt {
+        match make_raw_tx(tx) {
+            Ok(raw) => {
+                println!("Parsed tx: {:?}", tx);
+                let tx_hash: [u8; 32] = sha256_bytes(&raw);
+                let tx_hash_hex = bytes_to_hex(&tx_hash);
+                println!("Tx hash: {:?}", tx_hash_hex);
+                let sent_tx = send_tx(&raw);
+                println!("Sent tx: {:?}", sent_tx);
+                let res = p2p_send("127.0.0.1:5050", &sent_tx.unwrap()).await.unwrap();
+                println!("P2P response: {:?}", res);
+
+                Json(json!({
+                    "status": "accepted",
+                    "tx_hash": format!("{}", tx_hash_hex)
+                }))
+            }
+            Err(e) => {
+                println!("Failed to build raw tx: {}", e);
+                Json(json!({
+                    "status": "rejected",
+                    "reason": format!("Raw tx build error: {}", e)
+                }))
+            }
         }
-        None => {
-            println!("Invalid tx received: {}", body);
-            Json(json!({
-                "status": "rejected",
-                "reason": "Invalid transaction"
-            }))
-        }
+    } else {
+        println!("Invalid tx received: {}", body);
+        Json(json!({
+            "status": "rejected",
+            "reason": "Invalid transaction"
+        }))
     }
-    
+}
+
+fn sha256_bytes(input: &[u8]) -> [u8; 32] {
+    let hash = Sha256::digest(input);
+
+    let mut out = [0u8; 32];
+    out.copy_from_slice(&hash);
+
+    out
+}
+
+fn bytes_to_hex(bytes: &[u8]) -> String {
+    let mut hex = String::with_capacity(bytes.len() * 2);
+
+    for b in bytes {
+        hex.push_str(&format!("{:02x}", b));
+    }
+
+    hex
 }

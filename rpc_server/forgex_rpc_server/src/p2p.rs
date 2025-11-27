@@ -2,15 +2,15 @@ use anyhow::Result;
 use tokio::io::{AsyncReadExt, AsyncWriteExt};
 use tokio::net::TcpStream;
 
-pub async fn p2p_send(addr: &str, data: &str) -> Result<String> {
+pub async fn p2p_send(addr: &str, data: &[u8]) -> Result<Vec<u8>> {
     let mut stream = TcpStream::connect(addr).await?;
 
-    stream.write_all(data.as_bytes()).await?;
-    stream.write_all(b"\n").await?;
+    stream.write_all(data).await?;
 
-    let mut buffer = vec![0u8; 1024];
+    stream.write_all(&[b'\n']).await?;
+
+    let mut buffer = vec![0u8; 4096];
     let n = stream.read(&mut buffer).await?;
 
-    let response = String::from_utf8_lossy(&buffer[..n]).to_string();
-    Ok(response)
+    Ok(buffer[..n].to_vec())
 }
