@@ -44,3 +44,4 @@ pub fn mempool_get_top(m: &Mempool, count: usize) -> Vec<ValidTxCore> {
 pub fn mempool_remove_by_hash(m: &mut Mempool, tx_hash: &str) -> Option<ValidTxCore> {
     m.remove(tx_hash)
 }
+// mempool.rs ends here
