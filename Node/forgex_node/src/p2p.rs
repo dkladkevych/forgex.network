@@ -22,25 +22,27 @@ pub async fn run_p2p_server(
 async fn handle_connection(mut stream: TcpStream, handler: fn(Vec<u8>) -> Vec<u8>) {
     let mut buf = vec![0u8; 4096];
 
-    match stream.read(&mut buf).await {
-        Ok(0) => {
-            // клиент закрыл соединение
-            println!("Empty read, client closed connection");
-        }
-        Ok(n) => {
-            buf.truncate(n);
-            println!("Received {} bytes from peer", n);
-
-            // тут просто передаём в main
-            let response = handler(buf);
-
-            // отправляем ответ
-            if let Err(e) = stream.write_all(&response).await {
-                eprintln!("Failed to send response: {}", e);
+    loop {
+        match stream.read(&mut buf).await {
+            Ok(0) => {
+                println!("Peer disconnected");
+                return; // выходим из задачи
             }
-        }
-        Err(e) => {
-            eprintln!("Failed to read from socket: {}", e);
+            Ok(n) => {
+                let mut msg = buf[..n].to_vec();
+                println!("Received {} bytes", n);
+
+                let response = handler(msg);
+
+                if let Err(e) = stream.write_all(&response).await {
+                    eprintln!("Failed to send response: {}", e);
+                    return;
+                }
+            }
+            Err(e) => {
+                eprintln!("Socket read error: {}", e);
+                return;
+            }
         }
     }
 }

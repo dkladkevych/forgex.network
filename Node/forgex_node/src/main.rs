@@ -1,17 +1,42 @@
 mod p2p;
+mod model;
 
 use anyhow::Result;
+use crate::model::{Decoded, Tx, decode_message, make_tx_response, make_balance_response, make_nonce_response};
 
 fn handle_message(msg: Vec<u8>) -> Vec<u8> {
-    println!("---- New message from peer ----");
-    println!("Len: {}", msg.len());
-    println!("Raw bytes: {:?}", msg);
+    match decode_message(&msg) {
+        Ok(Decoded::Tx(tx)) => {
+            println!("TX RECEIVED:");
+            println!("{:#?}", tx);
 
-    let hex: String = msg.iter().map(|b| format!("{:02x}", b)).collect();
-    println!("Hex: {}", hex);
+            // пока просто ACCEPTED
+            make_tx_response()
+        }
 
-    b"OK_FROM_NODE\n".to_vec()
+        Ok(Decoded::AskBalance(addr)) => {
+            println!("ASK_BALANCE: {}", addr);
+
+            // временно баланс=123456
+            let balance = 123456u64;
+            make_balance_response(balance, &addr)
+        }
+
+        Ok(Decoded::AskNonce(addr)) => {
+            println!("ASK_NONCE: {}", addr);
+
+            let nonce = 42u64;
+            make_nonce_response(nonce, &addr)
+        }
+
+        Err(e) => {
+            println!("DECODE ERROR: {}", e);
+            b"ERR".to_vec()
+        }
+    }
 }
+
+
 
 #[tokio::main]
 async fn main() -> Result<()> {

@@ -15,7 +15,7 @@ use tower_http::cors::{Any, CorsLayer};
 use p2p::p2p_send;
 use crate::validate::Tx;
 use crate::validate::parse_tx;
-use model::{make_raw_tx, send_tx, ask_balance, ask_nonce};
+use model::{make_raw_tx, send_tx, ask_balance, ask_nonce, decode_p2p_response};
 use sha2::{Sha256, Digest};
 
 const IP_PORT: &str = "127.0.0.1:5050";
@@ -60,30 +60,26 @@ async fn get_info() -> Json<Value> {
 async fn get_balance(Query(params): Query<Value>) -> Json<Value> {
     let address = params.get("address").and_then(|v| v.as_str()).unwrap_or("");
     let msg = ask_balance(&address).unwrap();
-    let res = p2p_send(IP_PORT, &msg).await.unwrap();
+    let raw_res = p2p_send(IP_PORT, &msg).await.unwrap();
 
-    println!("Msg: {:?}", msg);
-    println!("Balance request for: {}", address);
-    println!("P2P response: {:?}", res);
+    let decoded = decode_p2p_response(&raw_res).unwrap();
 
     Json(json!({
-        "address": address,
-        "balance": 43
+        "address": decoded.address.unwrap(),
+        "balance": decoded.balance.unwrap()
     }))
 }
 
 async fn get_nonce(Query(params): Query<Value>) -> Json<Value> {
     let address = params.get("address").and_then(|v| v.as_str()).unwrap_or("");
     let msg = ask_nonce(&address).unwrap();
-    let res = p2p_send(IP_PORT, &msg).await.unwrap();
+    let raw_res = p2p_send(IP_PORT, &msg).await.unwrap();
 
-    println!("Msg: {:?}", msg);
-    println!("Nonce request for: {}", address);
-    println!("P2P response: {:?}", res);
+    let decoded = decode_p2p_response(&raw_res).unwrap();
 
     Json(json!({
-        "address": address,
-        "nonce": 1
+        "address": decoded.address.unwrap(),
+        "nonce": decoded.nonce.unwrap()
     }))
 }
 
@@ -93,30 +89,25 @@ async fn broadcast_tx(Json(body): Json<Value>) -> Json<Value> {
     if let Some(ref tx) = tx_opt {
         match make_raw_tx(tx) {
             Ok(raw) => {
-                println!("Parsed tx: {:?}", tx);
                 let tx_hash: [u8; 32] = sha256_bytes(&raw);
                 let tx_hash_hex = bytes_to_hex(&tx_hash);
-                println!("Tx hash: {:?}", tx_hash_hex);
-                let sent_tx = send_tx(&raw);
-                println!("Sent tx: {:?}", sent_tx);
-                let res = p2p_send(IP_PORT, &sent_tx.unwrap()).await.unwrap();
-                println!("P2P response: {:?}", res);
+
+                let sent_tx = send_tx(&raw).unwrap();
+                let raw_res = p2p_send(IP_PORT, &sent_tx).await.unwrap();
+
+                let decoded = decode_p2p_response(&raw_res).unwrap();
 
                 Json(json!({
-                    "status": "accepted",
-                    "tx_hash": format!("{}", tx_hash_hex)
+                    "status": decoded.status.unwrap_or("unknown".into()),
+                    "tx_hash": tx_hash_hex
                 }))
             }
-            Err(e) => {
-                println!("Failed to build raw tx: {}", e);
-                Json(json!({
-                    "status": "rejected",
-                    "reason": format!("Raw tx build error: {}", e)
-                }))
-            }
+            Err(e) => Json(json!({
+                "status": "rejected",
+                "reason": format!("Raw tx build error: {}", e)
+            })),
         }
     } else {
-        println!("Invalid tx received: {}", body);
         Json(json!({
             "status": "rejected",
             "reason": "Invalid transaction"

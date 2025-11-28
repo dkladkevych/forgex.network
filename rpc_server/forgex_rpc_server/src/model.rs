@@ -1,6 +1,15 @@
 use sha2::{Sha256, Digest};
 use crate::validate::Tx;
 
+pub struct DecodedResponse {
+    pub msg_type: u8,
+    pub balance: Option<u64>,
+    pub nonce: Option<u64>,
+    pub status: Option<String>,
+    pub address: Option<String>,
+}
+
+
 fn tx_type_byte(s: &str) -> u8 {
     match s {
         "transfer" => 1,
@@ -209,4 +218,85 @@ fn bytes_to_hex(bytes: &[u8]) -> String {
     }
 
     hex
+}
+
+pub fn decode_p2p_response(msg: &[u8]) -> Result<DecodedResponse, String> {
+    if msg.len() < 7 {
+        return Err("response too short".into());
+    }
+
+    if &msg[0..4] != b"FGX1" {
+        return Err("invalid magic in response".into());
+    }
+
+    let msg_type = msg[4];
+    let payload_len = u16::from_be_bytes([msg[5], msg[6]]) as usize;
+
+    if msg.len() != 7 + payload_len {
+        return Err("invalid response length".into());
+    }
+
+    let payload = &msg[7..];
+
+    match msg_type {
+        // -----------------------------
+        // TYPE 2 — TX_RESPONSE
+        // -----------------------------
+        2 => {
+            let status = String::from_utf8(payload.to_vec())
+                .map_err(|_| "invalid utf8 in tx response")?;
+
+            Ok(DecodedResponse {
+                msg_type,
+                balance: None,
+                nonce: None,
+                status: Some(status),
+                address: None,
+            })
+        }
+
+        // -----------------------------
+        // TYPE 4 — BALANCE
+        // -----------------------------
+        4 => {
+            if payload.len() != 64 {
+                return Err("invalid balance response length".into());
+            }
+
+            let balance = u64::from_be_bytes(payload[0..8].try_into().unwrap());
+            let address = String::from_utf8(payload[8..].to_vec())
+                .map_err(|_| "invalid utf8 in address")?;
+
+            Ok(DecodedResponse {
+                msg_type,
+                balance: Some(balance),
+                nonce: None,
+                status: None,
+                address: Some(address),
+            })
+        }
+
+        // -----------------------------
+        // TYPE 6 — NONCE
+        // -----------------------------
+        6 => {
+            if payload.len() != 64 {
+                return Err("invalid nonce response length".into());
+            }
+
+            let nonce = u64::from_be_bytes(payload[0..8].try_into().unwrap());
+            let address = String::from_utf8(payload[8..].to_vec())
+                .map_err(|_| "invalid utf8 in address")?;
+
+            Ok(DecodedResponse {
+                msg_type,
+                balance: None,
+                nonce: Some(nonce),
+                status: None,
+                address: Some(address),
+            })
+        }
+
+        _ => Err(format!("unknown response msg_type {}", msg_type)),
+    }
 }
