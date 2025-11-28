@@ -461,7 +461,7 @@ function Post(command, data) {
 
 function load_balance() {
     var response = JSON.parse(Get("/balance?address=" + address));
-    return response.balance;
+    return response.balance / 1000000;
 }
 
 function load_nonce() {

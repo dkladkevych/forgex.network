@@ -162,6 +162,7 @@ dependencies = [
  "anyhow",
  "bech32",
  "k256",
+ "once_cell",
  "sha2",
  "tokio",
 ]
