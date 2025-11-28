@@ -1,17 +1,26 @@
 mod p2p;
 mod model;
+mod tx;
 
 use anyhow::Result;
-use crate::model::{Decoded, Tx, decode_message, make_tx_response, make_balance_response, make_nonce_response};
+use crate::model::{Decoded, Tx, decode_message, make_tx_response, make_balance_response, make_nonce_response, make_tx_reject_response};
+use crate::tx::validate_tx;
 
 fn handle_message(msg: Vec<u8>) -> Vec<u8> {
     match decode_message(&msg) {
         Ok(Decoded::Tx(tx)) => {
             println!("TX RECEIVED:");
             println!("{:#?}", tx);
-
-            // пока просто ACCEPTED
-            make_tx_response()
+            match validate_tx(&tx) {
+                Ok(valid_tx) => {
+                    println!("TX VALID {:?}", valid_tx);
+                    make_tx_response()
+                }
+                Err(e) => {
+                    println!("TX INVALID: {}", e);
+                    make_tx_reject_response(&e)
+                }
+            }
         }
 
         Ok(Decoded::AskBalance(addr)) => {

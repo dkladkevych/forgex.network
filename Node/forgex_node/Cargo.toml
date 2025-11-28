@@ -6,3 +6,6 @@ edition = "2024"
 [dependencies]
 tokio = { version = "1", features = ["full"] }
 anyhow = "1"
+sha2 = "0.10"
+k256 = { version = "0.13", features = ["ecdsa"] }
+bech32 = "0.9"

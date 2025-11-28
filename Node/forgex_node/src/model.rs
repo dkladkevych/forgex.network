@@ -240,6 +240,21 @@ pub fn make_tx_response() -> Vec<u8> {
     buf
 }
 
+pub fn make_tx_reject_response(reason: &str) -> Vec<u8> {
+    let msg_type: u8 = 2;
+    let payload = reason.as_bytes();
+    let payload_len = payload.len() as u16;
+
+    let mut buf = Vec::with_capacity(4 + 1 + 2 + payload.len());
+
+    buf.extend_from_slice(b"FGX1");
+    buf.push(msg_type);
+    buf.extend_from_slice(&payload_len.to_be_bytes());
+    buf.extend_from_slice(payload);
+
+    buf
+}
+
 pub fn make_balance_response(balance: u64, address: &str) -> Vec<u8> {
     let msg_type: u8 = 4;
 
