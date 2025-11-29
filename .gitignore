@@ -1,3 +1,4 @@
 /rpc_server/forgex_rpc_server/target/
 /Node/forgex_node/target/
+/indexer/forgex-indexer/target/
 try.py

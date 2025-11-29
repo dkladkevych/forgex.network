@@ -460,7 +460,8 @@ function Post(command, data) {
 }
 
 function load_balance() {
-    var response = JSON.parse(Get("/balance?address=" + address));
+    var token = "GLD";
+    var response = JSON.parse(Get("/balance?address=" + address + "&token=" + token));
     return response.balance / 1000000;
 }
 

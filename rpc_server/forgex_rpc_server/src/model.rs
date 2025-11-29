@@ -83,7 +83,7 @@ pub fn ask_nonce(address: &str) -> Result<Vec<u8>, String> {
     Ok(buf)
 }
 
-pub fn ask_balance(address: &str) -> Result<Vec<u8>, String> {
+pub fn ask_balance(address: &str, token: &str) -> Result<Vec<u8>, String> {
     let addr_bytes = utf8_to_bytes(address);
     if addr_bytes.len() != 56 {
         return Err(format!(
@@ -92,22 +92,33 @@ pub fn ask_balance(address: &str) -> Result<Vec<u8>, String> {
         ));
     }
 
+    let token_bytes = utf8_to_bytes(token);
+    if token_bytes.len() != 3 {
+        return Err(format!(
+            "token must be 3 bytes utf-8, got {}",
+            token_bytes.len()
+        ));
+    }
+
     let msg_type: u8 = 3;
 
-    let payload_len: u16 = 56;
+    // 56 (address) + 3 (token) = 59
+    let payload_len: u16 = 56 + 3;
 
-    let mut buf = Vec::with_capacity(63);
+    // 4 ("FGX1") + 1 (msg_type) + 2 (len) + 59 (payload) = 66
+    let mut buf = Vec::with_capacity(66);
 
     buf.extend_from_slice(b"FGX1");
-
     buf.push(msg_type);
-
     buf.extend_from_slice(&payload_len.to_be_bytes());
 
-    buf.extend_from_slice(&addr_bytes);
+    // payload:
+    buf.extend_from_slice(&addr_bytes);   // первые 56 байт — адрес
+    buf.extend_from_slice(&token_bytes);  // дальше 3 байта — токен
 
     Ok(buf)
 }
+
 
 pub fn make_raw_tx(tx: &Tx) -> Result<Vec<u8>, String> {
     let mut buf = Vec::new();

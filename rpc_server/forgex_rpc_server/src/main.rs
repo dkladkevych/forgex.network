@@ -59,7 +59,9 @@ async fn get_info() -> Json<Value> {
 
 async fn get_balance(Query(params): Query<Value>) -> Json<Value> {
     let address = params.get("address").and_then(|v| v.as_str()).unwrap_or("");
-    let msg = ask_balance(&address).unwrap();
+    let token   = params.get("token").and_then(|v| v.as_str()).unwrap_or("GLD");
+
+    let msg = ask_balance(address, token).unwrap();
     let raw_res = p2p_send(IP_PORT, &msg).await.unwrap();
 
     let decoded = decode_p2p_response(&raw_res).unwrap();

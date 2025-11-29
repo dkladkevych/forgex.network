@@ -25,7 +25,7 @@ pub struct Tx {
 // -------------------------------------------------------
 pub enum Decoded {
     Tx(Tx),
-    AskBalance(String),
+    AskBalance(String, String),
     AskNonce(String),
 }
 
@@ -199,14 +199,21 @@ pub fn decode_message(msg: &[u8]) -> Result<Decoded, String> {
         // TYPE 3 — ASK_BALANCE (56 bytes)
         // -------------------------------------
         3 => {
-            if payload.len() != 56 {
-                return Err("invalid ask_balance payload".into());
+            if payload.len() < 56 + 3 {
+                return Err("AskBalance payload too short".into());
             }
-            let address = String::from_utf8(payload.to_vec())
-                .map_err(|_| "invalid utf8 addr".to_string())?;
 
-            Ok(Decoded::AskBalance(address))
+            let addr_bytes  = &payload[..56];
+            let token_bytes = &payload[56..59];
+
+            let addr  = String::from_utf8(addr_bytes.to_vec())
+                .map_err(|_| "invalid utf-8 in address")?;
+            let token = String::from_utf8(token_bytes.to_vec())
+                .map_err(|_| "invalid utf-8 in token")?;
+
+            Ok(Decoded::AskBalance(addr, token))
         }
+
 
         // -------------------------------------
         // TYPE 5 — ASK_NONCE (56 bytes)

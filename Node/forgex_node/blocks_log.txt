@@ -1,0 +1,48 @@
+============================================================
+BLOCK ID : blk-1-1df2a3c60b6d1da8-1764433824866
+HEIGHT   : 1
+VERSION  : 0.1
+CHAIN_ID : gld-dev-1
+PREVHASH : 0000000000000000000000000000000000000000000000000000000000000000
+TIME_MS  : 1764433824866
+TX_COUNT : 1
+TX_ROOT  : 1df2a3c60b6d1da8353345c8a1f3069e0c2b4b12bce37e7d331e2ac78e0b7034
+------------------------------------------------------------
+TX #0
+  tx_hash   : 1df2a3c60b6d1da8353345c8a1f3069e0c2b4b12bce37e7d331e2ac78e0b7034
+  tx_type   : transfer
+  from      : gld21vakxgv57d5snlk3t06emkcu7uyk5snmu5xtsp7sjtasx69tqawy
+  to        : gld21vakxgvkjuu4nw3uccclvl87fs35tq44rhw2ytv2fgtrwycqh9kh
+  token     : GLD
+  amount    : 10000000
+  fee       : 100000
+  nonce     : 0
+  timestamp : 1764433823355
+  pubkey    : 029e6d213fda2b7eb3bb639ee12d484f7ca19700fadc1d5abd2a379c2b9d866863
+  signature : 089744953e12724835367ddc02d9f22eb8a820a493a8d4f06ba00dc7c0d207024ed808c825797e3ec61014c0176dba781f5641dd3b7452f10c04b9187f3b88ee00
+------------------------------------------------------------
+
+============================================================
+BLOCK ID : blk-2-00c59090b254d88d-1764433919244
+HEIGHT   : 2
+VERSION  : 0.1
+CHAIN_ID : gld-dev-1
+PREVHASH : blk-1-1df2a3c60b6d1da8-1764433824866
+TIME_MS  : 1764433919244
+TX_COUNT : 1
+TX_ROOT  : 00c59090b254d88d020a6cf2d79bfe661e207661e402289fb835e4e6b7a6fbd9
+------------------------------------------------------------
+TX #0
+  tx_hash   : 00c59090b254d88d020a6cf2d79bfe661e207661e402289fb835e4e6b7a6fbd9
+  tx_type   : transfer
+  from      : gld21vakxgvkjuu4nw3uccclvl87fs35tq44rhw2ytv2fgtrwycqh9kh
+  to        : gld21vakxgv57d5snlk3t06emkcu7uyk5snmu5xtsp7sjtasx69tqawy
+  token     : GLD
+  amount    : 5000000
+  fee       : 50000
+  nonce     : 0
+  timestamp : 1764433918426
+  pubkey    : 02d2e72b374798c63ecf9fc98468b056a3bb9445b1c7389cf4d0391772e3e74f64
+  signature : 3d826735614d16d75ac2960333f18c4bbc765d1b606037d9c08befce04c7858661384e74fdf19fa46d4be78f35b6e50e2bcafe287a5d4b2e642ed0d63ac7c6fc00
+------------------------------------------------------------
+
