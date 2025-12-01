@@ -11,6 +11,7 @@ var priv_key
 var pub_key
 var address
 var balance
+var nonce
 
 // Welcome screen
 var welcome_create_btn = document.getElementById("welcome-create-btn");
@@ -432,6 +433,7 @@ async function decrypt_key(encrypted, password) {
 
 function load_dashboard() {
     go("dashboard");
+    nonce = load_nonce();
     dashboard_address.innerText = address;
     dashboard_balance.innerText = load_balance() + "GLD";
 }
@@ -618,7 +620,7 @@ dashboard_send_btn.addEventListener("click", function() {
     const amount = parseInt(parseFloat(dashboard_amount_input.value.trim())*1000000);
     const balance = parseInt(parseFloat(load_balance())*1000000);
     const fee = calculate_fee(amount);
-    const nonce = load_nonce();
+    nonce = nonce + 1;
     const timestamp_ms = Date.now();
     if (isNaN(amount) || amount <= 0) {
         alert("Invalid amount");

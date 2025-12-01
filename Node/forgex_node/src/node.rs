@@ -4,6 +4,8 @@ use tokio::time::{sleep, Duration};
 use crate::mempool::{MEMPOOL, mempool_get_top, mempool_remove_by_hash};
 use crate::state::{apply_block, block_info};
 use crate::block::{Block, BlockHeader, BlockBody, save_block};
+use crate::p2p::{p2p_send};
+use crate::model::{encode_block_raw};
 
 /// Запускает цикл ноды:
 /// каждые 2 секунды берёт до 25 транзакций из мемпула,
@@ -65,10 +67,21 @@ pub async fn run_node_loop() {
             }
         }
 
-        // ---- Сохраняем блок в txt и в память block.rs ----
-        if let Err(e) = save_block(block) {
-            println!("[NODE] FAILED save_block: {}", e);
+        let raw_block = encode_block_raw(&block);
+        match raw_block {
+            Ok(ref bytes) => {
+                println!("[NODE] encoded block to {} bytes", bytes.len());
+
+                if let Err(e) = p2p_send("127.0.0.1:9000", bytes).await {
+                    eprintln!("[NODE] FAILED to send block to indexer: {}", e);
+                }
+            }
+            Err(ref e) => {
+                println!("[NODE] FAILED encode_block_raw: {}", e);
+                continue;
+            }
         }
+
 
         // ---- Удаляем использованные транзы из мемпула ----
         {

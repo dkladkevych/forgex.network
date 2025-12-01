@@ -1,48 +1,50 @@
 ============================================================
-BLOCK ID : blk-1-1df2a3c60b6d1da8-1764433824866
-HEIGHT   : 1
+BLOCK ID : blk-9-01ad6a0135a565b1-1764561705764
+HEIGHT   : 9
 VERSION  : 0.1
 CHAIN_ID : gld-dev-1
-PREVHASH : 0000000000000000000000000000000000000000000000000000000000000000
-TIME_MS  : 1764433824866
-TX_COUNT : 1
-TX_ROOT  : 1df2a3c60b6d1da8353345c8a1f3069e0c2b4b12bce37e7d331e2ac78e0b7034
+PREVHASH : blk-8-691b4ffb22cd3e46-1764561067172
+TIME_MS  : 1764561705764
+TX_COUNT : 3
+TX_ROOT  : 01ad6a0135a565b1d0bc7057c8aaeebf90f1621e1c737c5413461c2ad098a1e017acf5a0bb70e3cceda42fa5719495717aac366a9bc3c447df2a822356128670292cf61e6bf64fbb4eee3c56099c7feaa9c92e2bac1dbed0243a785ed3bcb5ec
 ------------------------------------------------------------
 TX #0
-  tx_hash   : 1df2a3c60b6d1da8353345c8a1f3069e0c2b4b12bce37e7d331e2ac78e0b7034
+  tx_hash   : 01ad6a0135a565b1d0bc7057c8aaeebf90f1621e1c737c5413461c2ad098a1e0
   tx_type   : transfer
   from      : gld21vakxgv57d5snlk3t06emkcu7uyk5snmu5xtsp7sjtasx69tqawy
   to        : gld21vakxgvkjuu4nw3uccclvl87fs35tq44rhw2ytv2fgtrwycqh9kh
   token     : GLD
-  amount    : 10000000
-  fee       : 100000
-  nonce     : 0
-  timestamp : 1764433823355
+  amount    : 1000000000
+  fee       : 10000000
+  nonce     : 29
+  timestamp : 1764561705289
   pubkey    : 029e6d213fda2b7eb3bb639ee12d484f7ca19700fadc1d5abd2a379c2b9d866863
-  signature : 089744953e12724835367ddc02d9f22eb8a820a493a8d4f06ba00dc7c0d207024ed808c825797e3ec61014c0176dba781f5641dd3b7452f10c04b9187f3b88ee00
+  signature : ba6ef72ccc8695d7e534676dc9d1d9a8c1dcedc72f2413e3bb41a7c9cab87baf4a699d51847f6b502c0e5b4b3c724e6039bb25a9c0e4502fc2d5e457f6c576fe01
 ------------------------------------------------------------
-
-============================================================
-BLOCK ID : blk-2-00c59090b254d88d-1764433919244
-HEIGHT   : 2
-VERSION  : 0.1
-CHAIN_ID : gld-dev-1
-PREVHASH : blk-1-1df2a3c60b6d1da8-1764433824866
-TIME_MS  : 1764433919244
-TX_COUNT : 1
-TX_ROOT  : 00c59090b254d88d020a6cf2d79bfe661e207661e402289fb835e4e6b7a6fbd9
-------------------------------------------------------------
-TX #0
-  tx_hash   : 00c59090b254d88d020a6cf2d79bfe661e207661e402289fb835e4e6b7a6fbd9
+TX #1
+  tx_hash   : 17acf5a0bb70e3cceda42fa5719495717aac366a9bc3c447df2a822356128670
   tx_type   : transfer
-  from      : gld21vakxgvkjuu4nw3uccclvl87fs35tq44rhw2ytv2fgtrwycqh9kh
-  to        : gld21vakxgv57d5snlk3t06emkcu7uyk5snmu5xtsp7sjtasx69tqawy
+  from      : gld21vakxgv57d5snlk3t06emkcu7uyk5snmu5xtsp7sjtasx69tqawy
+  to        : gld21vakxgvkjuu4nw3uccclvl87fs35tq44rhw2ytv2fgtrwycqh9kh
   token     : GLD
-  amount    : 5000000
-  fee       : 50000
-  nonce     : 0
-  timestamp : 1764433918426
-  pubkey    : 02d2e72b374798c63ecf9fc98468b056a3bb9445b1c7389cf4d0391772e3e74f64
-  signature : 3d826735614d16d75ac2960333f18c4bbc765d1b606037d9c08befce04c7858661384e74fdf19fa46d4be78f35b6e50e2bcafe287a5d4b2e642ed0d63ac7c6fc00
+  amount    : 1000000000
+  fee       : 10000000
+  nonce     : 28
+  timestamp : 1764561705150
+  pubkey    : 029e6d213fda2b7eb3bb639ee12d484f7ca19700fadc1d5abd2a379c2b9d866863
+  signature : aeafc5c5ecb2a6adb710597592332e388598e6c74e2e74e172c5d4c77beecae06726449080ae1921d461dc76f25d669feef502e3f2594d415e2f6ff35f8b502301
+------------------------------------------------------------
+TX #2
+  tx_hash   : 292cf61e6bf64fbb4eee3c56099c7feaa9c92e2bac1dbed0243a785ed3bcb5ec
+  tx_type   : transfer
+  from      : gld21vakxgv57d5snlk3t06emkcu7uyk5snmu5xtsp7sjtasx69tqawy
+  to        : gld21vakxgvkjuu4nw3uccclvl87fs35tq44rhw2ytv2fgtrwycqh9kh
+  token     : GLD
+  amount    : 1000000000
+  fee       : 10000000
+  nonce     : 30
+  timestamp : 1764561705409
+  pubkey    : 029e6d213fda2b7eb3bb639ee12d484f7ca19700fadc1d5abd2a379c2b9d866863
+  signature : f777cf414b58e887ff8e32d082add4375fc353bf52f00fd5915d130b7e0f6e4d504b8fcc0ffc4f396d0975e24ed4ebf792b018378b8158f36b2a0bedf992942301
 ------------------------------------------------------------
 

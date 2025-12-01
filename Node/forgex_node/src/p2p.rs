@@ -46,3 +46,15 @@ async fn handle_connection(mut stream: TcpStream, handler: fn(Vec<u8>) -> Vec<u8
         }
     }
 }
+
+pub async fn p2p_send(addr: &str, data: &[u8]) -> Result<()> {
+    let mut stream = TcpStream::connect(addr).await?;
+
+    // отправляем весь пакет
+    stream.write_all(data).await?;
+
+    println!("Sent {} bytes to {}", data.len(), addr);
+    stream.shutdown().await?;
+
+    Ok(())
+}
